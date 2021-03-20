@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="SimpleServerClient_lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../../../Code/Java/SimpleServerClient_lib.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../../../../../Code/Java/SimpleServerClient_lib.jar!/" />
+    </SOURCES>
+  </library>
+</component>
