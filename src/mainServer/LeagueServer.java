@@ -26,7 +26,10 @@ public class LeagueServer extends Server {
             @Override
             public void run(Datapackage pack, Socket socket) {
                 System.out.println(pack);
-                String absender = pack.getSenderID();
+                int absenderid = Integer.parseInt(String.valueOf(pack.get(1)));
+                System.out.println(absenderid);
+                positions[absenderid][0] = Integer.parseInt(String.valueOf(pack.get(2)));
+                positions[absenderid][1] = Integer.parseInt(String.valueOf(pack.get(3)));
                 sendReply(socket, "Hallo");
             }
         });
@@ -35,9 +38,9 @@ public class LeagueServer extends Server {
             @Override
             public void run(Datapackage pack, Socket socket) {
                 String authuser = (String) pack.get(1);
-                System.out.println("Neuer Login: "+authuser);
+                System.out.println("Neuer Login: "+authuser + " ID: "+(getClientCount()-1));
                 if(getClientCount() <= 2) {
-                    sendReply(socket, "player"+getClientCount());
+                    sendReply(socket, "player"+(getClientCount()), getClientCount());
                 }
                 else{
                     sendReply(socket, "Server Full");
@@ -96,6 +99,7 @@ public class LeagueServer extends Server {
             Thread.sleep(1000);
             server.broadcastMessage(new Datapackage("GAME_INFO", 1));
             Thread.sleep(1000);
+            server.broadcastMessage(new Datapackage("GAME_INFO", 6));
             while(startgame == 2){
                 System.out.println("Send Positions");
                 server.broadcastMessage(new Datapackage("POSITIONS", positions[0][0], positions[0][1], positions[1][0], positions[1][1]));
