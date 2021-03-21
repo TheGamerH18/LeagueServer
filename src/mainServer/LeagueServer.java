@@ -64,6 +64,11 @@ public class LeagueServer extends Server {
         }
     }
 
+    public void gamereset() {
+        positions = new int[][]{{19, 0}, {0, 19}};
+        startgame = 1;
+    }
+
     public void startgame(LeagueServer server) throws InterruptedException {
 
         Thread checkuser = new Thread(new Runnable() {
@@ -103,6 +108,7 @@ public class LeagueServer extends Server {
                 server.broadcastMessage(new Datapackage("POSITIONS", positions[0][0], positions[0][1], positions[1][0], positions[1][1]));
                 Thread.sleep(1000);
             }
+            gamereset();
         }
     }
 }
