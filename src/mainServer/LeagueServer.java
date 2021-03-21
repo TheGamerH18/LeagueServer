@@ -17,7 +17,7 @@ public class LeagueServer extends Server {
 
     int[][] positions = {{19, 0}, {0, 19}};
 
-    // Player Health
+    // Player Health [0] = Current Health | [1] = Max Health
     int[][] playerhealth = new int[2][2];
 
     public LeagueServer() {
@@ -31,8 +31,10 @@ public class LeagueServer extends Server {
             @Override
             public void run(Datapackage pack, Socket socket) {
                 int absenderid = Integer.parseInt(String.valueOf(pack.get(1)));
-                int empfangerid = Integer.parseInt(String.valueOf(pack.get(2)));
-                System.out.println(absenderid + " " + empfangerid + " Amount: ");
+                int targetid = Integer.parseInt(String.valueOf(pack.get(2)));
+                int amount = Integer.parseInt(String.valueOf(pack.get(3)));
+                System.out.println(absenderid + " " + targetid + " Amount: " + amount);
+                playerhealth[targetid][0] -= amount;
             }
         });
 
