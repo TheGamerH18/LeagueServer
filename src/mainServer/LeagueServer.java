@@ -2,9 +2,13 @@ package mainServer;
 
 import java.net.Socket;
 
+import champ.Ashe;
+import champ.Mundo;
 import com.blogspot.debukkitsblog.net.Datapackage;
 import com.blogspot.debukkitsblog.net.Executable;
 import com.blogspot.debukkitsblog.net.Server;
+
+import javax.xml.crypto.Data;
 
 @SuppressWarnings("BusyWait")
 public class LeagueServer extends Server {
@@ -13,12 +17,24 @@ public class LeagueServer extends Server {
 
     int[][] positions = {{19, 0}, {0, 19}};
 
+    // Player Health
+    int[][] playerhealth = new int[2][2];
+
     public LeagueServer() {
         super(25598, true, true, false);
     }
 
     @Override
     public void preStart() {
+
+        registerMethod("DAMAGE", new Executable() {
+            @Override
+            public void run(Datapackage pack, Socket socket) {
+                int absenderid = Integer.parseInt(String.valueOf(pack.get(1)));
+                int empfangerid = Integer.parseInt(String.valueOf(pack.get(2)));
+                System.out.println(absenderid + " " + empfangerid + " Amount: ");
+            }
+        });
 
         registerMethod("NEW_POSITION", new Executable() {
             @Override
@@ -103,8 +119,17 @@ public class LeagueServer extends Server {
             server.broadcastMessage(new Datapackage("GAME_INFO", 1));
             Thread.sleep(1000);
             server.broadcastMessage(new Datapackage("GAME_INFO", 6));
+
+            Ashe p1 = new Ashe();
+            Mundo p2 = new Mundo();
+
+            playerhealth[0][1] = p1.maxhealth;
+            playerhealth[0][0] = p1.maxhealth;
+            playerhealth[1][0] = p2.maxhealth;
+            playerhealth[1][1] = p2.maxhealth;
             while(startgame == 2){
-                System.out.println("Send Positions");
+                System.out.println("Send Data");
+                server.broadcastMessage(new Datapackage("P_HEALTH", playerhealth[0][0], playerhealth[0][1], playerhealth[1][0], playerhealth[1][1]));
                 server.broadcastMessage(new Datapackage("POSITIONS", positions[0][0], positions[0][1], positions[1][0], positions[1][1]));
                 Thread.sleep(1000);
             }
