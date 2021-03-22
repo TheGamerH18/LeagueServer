@@ -8,8 +8,6 @@ import com.blogspot.debukkitsblog.net.Datapackage;
 import com.blogspot.debukkitsblog.net.Executable;
 import com.blogspot.debukkitsblog.net.Server;
 
-import javax.xml.crypto.Data;
-
 @SuppressWarnings("BusyWait")
 public class LeagueServer extends Server {
 
@@ -74,9 +72,13 @@ public class LeagueServer extends Server {
         });
     }
 
+    // Check if Users are logged in and if the Players are a life
     public void checkuser() {
         if(getClientCount() == 2) {
             startgame = 2;
+            if(playerhealth[0][0] <= 0 || playerhealth[1][0] <= 0){
+                startgame = 0;
+            }
         } else {
             startgame = 1;
         }
@@ -85,6 +87,7 @@ public class LeagueServer extends Server {
     public void gamereset() {
         positions = new int[][]{{19, 0}, {0, 19}};
         startgame = 1;
+        playerhealth = new int[][]{{0, 0}, {0, 0}};
     }
 
     public void startgame(LeagueServer server) throws InterruptedException {
@@ -110,6 +113,14 @@ public class LeagueServer extends Server {
                 server.broadcastMessage(new Datapackage("GAME_INFO", 0));
                 Thread.sleep(1000);
             }
+
+            Ashe p1 = new Ashe();
+            Mundo p2 = new Mundo();
+
+            playerhealth[0][1] = p1.maxhealth;
+            playerhealth[0][0] = p1.maxhealth;
+            playerhealth[1][0] = p2.maxhealth;
+            playerhealth[1][1] = p2.maxhealth;
             server.broadcastMessage(new Datapackage("GAME_INFO", 5));
             Thread.sleep(1000);
             server.broadcastMessage(new Datapackage("GAME_INFO", 4));
@@ -121,20 +132,15 @@ public class LeagueServer extends Server {
             server.broadcastMessage(new Datapackage("GAME_INFO", 1));
             Thread.sleep(1000);
             server.broadcastMessage(new Datapackage("GAME_INFO", 6));
-
-            Ashe p1 = new Ashe();
-            Mundo p2 = new Mundo();
-
-            playerhealth[0][1] = p1.maxhealth;
-            playerhealth[0][0] = p1.maxhealth;
-            playerhealth[1][0] = p2.maxhealth;
-            playerhealth[1][1] = p2.maxhealth;
             while(startgame == 2){
                 System.out.println("Send Data");
                 server.broadcastMessage(new Datapackage("P_HEALTH", playerhealth[0][0], playerhealth[0][1], playerhealth[1][0], playerhealth[1][1]));
                 server.broadcastMessage(new Datapackage("POSITIONS", positions[0][0], positions[0][1], positions[1][0], positions[1][1]));
                 Thread.sleep(1000);
             }
+
+            server.broadcastMessage(new Datapackage("END" ));
+
             gamereset();
         }
     }
