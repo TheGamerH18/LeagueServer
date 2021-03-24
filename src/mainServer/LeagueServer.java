@@ -18,6 +18,9 @@ public class LeagueServer extends Server {
     // Player Health [0] = Current Health | [1] = Max Health
     int[][] playerhealth = new int[2][2];
 
+    // Winner var saving last winner
+    int winner;
+
     public LeagueServer() {
         super(25598, true, true, false);
     }
@@ -78,6 +81,11 @@ public class LeagueServer extends Server {
             startgame = 2;
             if(playerhealth[0][0] <= 0 || playerhealth[1][0] <= 0){
                 startgame = 0;
+                if(playerhealth[0][0] > 0){
+                    winner = 1;
+                } else {
+                    winner = 2;
+                }
             }
         } else {
             startgame = 1;
@@ -139,7 +147,7 @@ public class LeagueServer extends Server {
                 Thread.sleep(1000);
             }
 
-            server.broadcastMessage(new Datapackage("END" ));
+            server.broadcastMessage(new Datapackage("END", winner));
 
             gamereset();
         }
