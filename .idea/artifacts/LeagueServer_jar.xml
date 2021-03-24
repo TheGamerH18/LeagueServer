@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="LeagueServer:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/LeagueServer_jar</output-path>
+    <root id="archive" name="LeagueServer.jar">
+      <element id="module-output" name="LeagueServer" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../../../../Code/Java/SimpleServerClient_lib.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
