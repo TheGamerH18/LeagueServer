@@ -28,6 +28,21 @@ public class LeagueServer extends Server {
     @Override
     public void preStart() {
 
+        registerMethod("AUTH", new Executable() {
+            @Override
+            public void run(Datapackage pack, Socket socket) {
+                String authuser = (String) pack.get(1);
+                System.out.println("Neuer Login: "+authuser + " ID: "+(getClientCount()-1));
+                if(getClientCount() <= 2) {
+                    sendReply(socket, "player"+(getClientCount()), getClientCount());
+                }
+                else{
+                    sendReply(socket, "Server Full");
+                }
+                checkuser();
+            }
+        });
+
         registerMethod("DAMAGE", new Executable() {
             @Override
             public void run(Datapackage pack, Socket socket) {
@@ -51,20 +66,7 @@ public class LeagueServer extends Server {
             }
         });
 
-        registerMethod("AUTH", new Executable() {
-            @Override
-            public void run(Datapackage pack, Socket socket) {
-                String authuser = (String) pack.get(1);
-                System.out.println("Neuer Login: "+authuser + " ID: "+(getClientCount()-1));
-                if(getClientCount() <= 2) {
-                    sendReply(socket, "player"+(getClientCount()), getClientCount());
-                }
-                else{
-                    sendReply(socket, "Server Full");
-                }
-                checkuser();
-            }
-        });
+
 
         registerMethod("PRINT", new Executable() {
             @Override
