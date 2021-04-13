@@ -81,12 +81,14 @@ public class LeagueServer extends Server {
     public void checkuser() {
         if(getClientCount() == 2) {
             startgame = 2;
-            if(playerhealth[0][0] <= 0 || playerhealth[1][0] <= 0){
-                startgame = 0;
-                if(playerhealth[0][0] > 0){
-                    winner = 1;
-                } else {
-                    winner = 2;
+            if(champsselected == 2) {
+                if (playerhealth[0][0] <= 0 || playerhealth[1][0] <= 0) {
+                    startgame = 0;
+                    if (playerhealth[0][0] > 0) {
+                        winner = 1;
+                    } else {
+                        winner = 2;
+                    }
                 }
             }
         } else {
