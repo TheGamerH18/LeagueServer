@@ -22,7 +22,7 @@ public class LeagueServer extends Server {
     int winner;
 
     public LeagueServer() {
-        super(25598, true, true, false);
+        super(25598, true, true, false, false);
     }
 
     @Override
