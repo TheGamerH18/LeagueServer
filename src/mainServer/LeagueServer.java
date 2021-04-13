@@ -1,8 +1,11 @@
 package mainServer;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 
 import champ.Ashe;
+import champ.Champion;
 import champ.Mundo;
 import com.blogspot.debukkitsblog.net.Datapackage;
 import com.blogspot.debukkitsblog.net.Executable;
@@ -17,6 +20,10 @@ public class LeagueServer extends Server {
 
     // Player Health [0] = Current Health | [1] = Max Health
     int[][] playerhealth = new int[2][2];
+
+    // Player Champs
+    Champion[] playerchamps = new Champion[2];
+    int champsselected = 0;
 
     // Winner var saving last winner
     int winner;
@@ -40,6 +47,28 @@ public class LeagueServer extends Server {
                     sendReply(socket, "Server Full");
                 }
                 checkuser();
+            }
+        });
+
+        registerMethod("CHAMP_SELECT", new Executable(){
+            @Override
+            public void run(Datapackage pack, Socket socket) {
+                // 1: Wer hat gewaehlt? | 2: Was wurde gewaehlt?
+                int absenderplayerid = Integer.parseInt(String.valueOf(pack.get(1)));
+                String champ = String.valueOf(pack.get(2));
+                for (Champion playerchamp : playerchamps) {
+                    if (playerchamp.Champname.equals(champ)) {
+                        sendReply(socket, "Champ already selected");
+                    }
+                }
+                try {
+                    Class<?> clazz = Class.forName(champ);
+                    playerchamps[absenderplayerid] = (Champion) clazz.newInstance();
+                    sendReply(socket, "Champ accepted");
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                    e.printStackTrace();
+                    sendReply(socket, "Server error");
+                }
             }
         });
 
@@ -126,24 +155,36 @@ public class LeagueServer extends Server {
                 Thread.sleep(1000);
             }
 
-            Ashe p1 = new Ashe();
-            Mundo p2 = new Mundo();
+            while (champsselected != 2){
+                for (Champion playerchamp : playerchamps) {
+                    if (playerchamp.maxhealth == 0) {
+                        champsselected++;
+                    }
+                }
+                if(champsselected != 2){
+                    champsselected = 0;
+                }
+            }
 
-            playerhealth[0][1] = p1.maxhealth;
-            playerhealth[0][0] = p1.maxhealth;
-            playerhealth[1][0] = p2.maxhealth;
-            playerhealth[1][1] = p2.maxhealth;
-            server.broadcastMessage(new Datapackage("GAME_INFO", 5));
-            Thread.sleep(1000);
-            server.broadcastMessage(new Datapackage("GAME_INFO", 4));
-            Thread.sleep(1000);
-            server.broadcastMessage(new Datapackage("GAME_INFO", 3));
-            Thread.sleep(1000);
-            server.broadcastMessage(new Datapackage("GAME_INFO", 2));
-            Thread.sleep(1000);
-            server.broadcastMessage(new Datapackage("GAME_INFO", 1));
-            Thread.sleep(1000);
-            server.broadcastMessage(new Datapackage("GAME_INFO", 6));
+            for(int i = 0; i < playerchamps.length; i++){
+                playerhealth[i][0] = playerchamps[i].maxhealth;
+                playerhealth[i][1] = playerchamps[i].maxhealth;
+            }
+
+            if(startgame == 2) {
+                server.broadcastMessage(new Datapackage("GAME_INFO", 5));
+                Thread.sleep(1000);
+                server.broadcastMessage(new Datapackage("GAME_INFO", 4));
+                Thread.sleep(1000);
+                server.broadcastMessage(new Datapackage("GAME_INFO", 3));
+                Thread.sleep(1000);
+                server.broadcastMessage(new Datapackage("GAME_INFO", 2));
+                Thread.sleep(1000);
+                server.broadcastMessage(new Datapackage("GAME_INFO", 1));
+                Thread.sleep(1000);
+                server.broadcastMessage(new Datapackage("GAME_INFO", 6));
+            }
+
             while(startgame == 2){
                 System.out.println("Send Data");
                 server.broadcastMessage(new Datapackage("P_HEALTH", playerhealth[0][0], playerhealth[0][1], playerhealth[1][0], playerhealth[1][1]));
